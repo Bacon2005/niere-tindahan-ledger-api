@@ -1,13 +1,15 @@
 import "server-only";
-import { eq } from "drizzle-orm";
+
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { db } from "@/db";
-import { profiles } from "@/db/schema";
 import { createClient } from "@/lib/supabase/server";
-
+import { profiles } from "@/db/schema";
+import { db } from "@/db";
+import { eq } from "drizzle-orm";
 export type Profile = typeof profiles.$inferSelect;
 
+// This checks whether the logged-in user is an admin before allowing access to /admin.
+// If not, they are sent back to /login.
 export async function getProfile(request?: Request): Promise<Profile | null> {
   const token = request?.headers.get("Authorization")?.replace("Bearer ", "");
   const supabase = await createClient();
